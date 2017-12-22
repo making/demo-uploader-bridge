@@ -3,6 +3,7 @@ package com.example.demouploaderbridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class UploadController {
     @PostMapping("/bridge")
     public String bridge(@RequestParam MultipartFile file) throws Exception {
         MultiValueMap<String, Object> multiPartBody = new LinkedMultiValueMap<>();
-        multiPartBody.add("file", new InputStreamResource(file.getInputStream()) {
+        Resource resource = new InputStreamResource(file.getInputStream()) {
             // See https://jira.spring.io/browse/SPR-13571
             @Override
             public String getFilename() {
@@ -42,7 +43,8 @@ public class UploadController {
             public long contentLength() throws IOException {
                 return -1; // we do not want to generally read the whole stream into memory ...
             }
-        });
+        };
+        multiPartBody.add("file", resource);
         RequestEntity<MultiValueMap<String, Object>> request = RequestEntity
                 .post(URI.create("http://localhost:9090/upload"))
                 .contentType(MediaType.MULTIPART_FORM_DATA)
