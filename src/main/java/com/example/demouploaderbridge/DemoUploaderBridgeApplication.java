@@ -14,7 +14,7 @@ public class DemoUploaderBridgeApplication {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setBufferRequestBody(false); // Important!!
+        requestFactory.setBufferRequestBody(false); // Use "Chunked transfer encoding"
         return builder
                 .requestFactory(requestFactory)
                 .build();
